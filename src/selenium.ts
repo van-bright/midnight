@@ -137,7 +137,7 @@ export async function runAutomation(options: AutomationOptions): Promise<void> {
 
       console.log(`countDownText: ${countDownText}, startSessionText: ${startSessionText}`);
 
-      if (countDownText == "00:00:00" || startSessionText == "Start session") {
+      if (countDownText == "00:00:00:00" || startSessionText == "Start session") {
         console.log("\t❌ 任务中断, 刷新重启.....");
         await driver.navigate().refresh();
 
