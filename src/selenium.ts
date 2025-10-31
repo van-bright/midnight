@@ -8,6 +8,7 @@ import path from "path";
 export interface AutomationOptions {
   url: string;
   headless?: boolean;
+  processId: string;
 }
 
 function createUniqueChromeUserDataDir(): string {
@@ -114,7 +115,7 @@ export async function runAutomation(options: AutomationOptions): Promise<void> {
     await driver.get(url);
 
     // 等待手动安装扩展, 按下任意键继续, 按Ctrl+C 退出
-    console.log("安装好钱包, 启动好挖矿后, 按任意键继续. 按Ctrl+C 退出");
+    console.log(options.processId + " : 安装好钱包, 启动好挖矿后, 按任意键继续. 按Ctrl+C 退出");
     await new Promise((resolve) => {
       process.stdin.once("data", () => resolve(undefined));
       process.on("SIGINT", () => {
@@ -135,21 +136,31 @@ export async function runAutomation(options: AutomationOptions): Promise<void> {
       const countDownText = await countDownElement.getText();
       const startSessionText = await startSessionElement.getText();
 
-      console.log(`countDownText: ${countDownText}, startSessionText: ${startSessionText}`);
+      console.log(`${options.processId} : countDownText: ${countDownText}, startSessionText: ${startSessionText}`);
 
       if (countDownText == "00:00:00:00" || startSessionText == "Start session") {
-        console.log("\t❌ 任务中断, 刷新重启.....");
-        await driver.navigate().refresh();
+        console.log(`${options.processId} : ❌ 任务中断, 刷新重启.....`);
 
-        const startSessionElement = await driver.wait(until.elementLocated(By.xpath(startSessionCss)), 10000);
-        await startSessionElement.click();
+        while (true) {
+          try {
+            await driver.navigate().refresh();
+
+            const startSessionElement = await driver.wait(until.elementLocated(By.xpath(startSessionCss)), 10000);
+            await startSessionElement.click();
+
+            break;
+          } catch (e) {
+            console.log(`${options.processId} : ❌ 刷新重启失败, 继续重试.....`);
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+          }
+        }
       }
 
       // 每10s钟检查一次是否已经停了
       await new Promise((resolve) => setTimeout(resolve, 10000));
     }
   } catch (error) {
-    console.error("Error during automation:", error);
+    console.error(`${options.processId} : Error during automation:`, error);
     throw error;
   } finally {
     await driver.quit();
