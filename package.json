@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@types/selenium-webdriver": "^4.35.3",
+    "axios": "^1.13.1",
     "selenium-webdriver": "^4.38.0"
   },
   "devDependencies": {

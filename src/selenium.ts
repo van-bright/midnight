@@ -145,6 +145,8 @@ export async function runAutomation(options: AutomationOptions): Promise<void> {
           try {
             await driver.navigate().refresh();
 
+            await driver.sleep(10000);
+
             const startSessionElement = await driver.wait(until.elementLocated(By.xpath(startSessionCss)), 10000);
             await startSessionElement.click();
 
