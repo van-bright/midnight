@@ -25,12 +25,22 @@ async function checkAndRestartSession(driver: WebDriver, processId: string, inte
 
           await driver.sleep(10000);
 
-          const startSessionElement = await driver.wait(until.elementLocated(By.xpath(startSessionCss)), 10000);
-          await startSessionElement.click();
+          let triedCount = 0;
+          while ( triedCount < 12 ) {
+            triedCount++;
+            try {
+              const startSessionElement = await driver.wait(until.elementLocated(By.xpath(startSessionCss)), 10000);
+              await startSessionElement.click();
+              break;
+            } catch (e) {
+              console.log(`${processId} : ❌ 点击开始按钮失败,等10秒钟 继续重试....., error: ${e}`);
+              await new Promise((resolve) => setTimeout(resolve, 10000));
+            }
+          }
 
           break;
         } catch (e) {
-          console.log(`${processId} : ❌ 刷新重启失败, 继续重试.....`);
+          console.log(`${processId} : ❌ 刷新重启失败, 继续重试....., error: ${e}`);
           await new Promise((resolve) => setTimeout(resolve, 1000));
         }
       }
