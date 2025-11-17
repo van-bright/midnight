@@ -13,7 +13,11 @@
   "dependencies": {
     "@types/selenium-webdriver": "^4.35.3",
     "axios": "^1.13.1",
-    "selenium-webdriver": "^4.38.0"
+    "selenium-webdriver": "^4.38.0",
+    "@emurgo/cardano-serialization-lib-nodejs": "^11.5.0",
+    "bip39": "^3.1.0",
+    "@emurgo/cardano-message-signing-nodejs": "^1.1.0",
+    "https-proxy-agent": "^7.0.5"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",
